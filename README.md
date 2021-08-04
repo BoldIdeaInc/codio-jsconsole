@@ -11,7 +11,7 @@ clicking "configure" (or you can edit the `.codio` file directly.
 
 Create preview URLs like so:
 
-```json
+```javascript
 {
   // Configure your Run and Preview buttons here.
 
