@@ -24,6 +24,19 @@ main {
   cursor: row-resize;
 }
 #console {
+  background-color: #272C34;
+  display: flex;
+  flex-direction: column;
+}
+#console h1 {
+  font-size: 14px;
+  color: white;
+  margin: 0;
+  padding: 0 1em 8px 1em;
+  border-bottom: 1px solid #666;
+  cursor: pointer;
+}
+#console .container {
   overflow: auto;
 }
 #console .LineNav button,
@@ -31,6 +44,9 @@ main {
   display: none;
 }
 
+#console .container {
+  flex: 1;
+}
 #console .App {
   display: flex;
   flex-direction: column;
