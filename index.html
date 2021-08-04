@@ -37,9 +37,6 @@
       path = window.location.hash.replace(/^#/, '') || '';
     }
 
-    function setPanes(topHeight, bottomHeight) {
-    }
-
     function createConsole(container, frame) {
       return new Promise((resolve, reject) => {
         // override default load action (don't show intro)
@@ -100,6 +97,7 @@
         
         p = createConsole(consoleContainer, frame);
       } else {
+        document.body.classList.add('console-only');
         consoleDiv.style.height = '100%';
         p = createConsole(consoleContainer);
       }

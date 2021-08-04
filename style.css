@@ -28,13 +28,16 @@ main {
   display: flex;
   flex-direction: column;
 }
-#console h1 {
+#console > h1 {
   font-size: 14px;
   color: white;
   margin: 0;
   padding: 0 1em 8px 1em;
   border-bottom: 1px solid #666;
   cursor: pointer;
+}
+body.console-only #console > h1 {
+  padding-top: 8px;
 }
 #console .container {
   overflow: auto;
