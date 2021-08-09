@@ -27,14 +27,16 @@
     } catch (e) {
       insideIDE = true;
     }
-    if (!insideIDE) {
-      window.location.href = path;
-    }
+    params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
     
-    if (window.location.hash === '#console') {
+    if (params.has('consoleOnly')) {
       consoleOnly = true;
     } else {
-      path = window.location.hash.replace(/^#/, '') || '';
+      path = params.get('preview');
+    }
+
+    if (!insideIDE) {
+      window.location.href = path;
     }
 
     function createConsole(container, frame) {
@@ -66,19 +68,45 @@
 
     let panes;
 
+    function getSizePercent(size) {
+      const fullHeight = document.body.offsetHeight;
+      let percentage;
+      if (match = size.match(/(\d+)%/)) {
+        percentage = parseInt(match[1]);
+      } else if (match = size.match(/(\d+)px/)) {
+        percentage = (parseInt(match[1]) / fullHeight) * 100;
+      } else {
+        size = parseInt(size);
+        if (isNaN(size)) {
+          throw new Error('Invalid size: ' + size);
+        }
+        percentage = (size / fullHeight) * 100;
+      }
+      return percentage;
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       const frameWrapper = document.querySelector('#frameWrapper');
       const consoleDiv = document.querySelector('#console');
       const consoleContainer = document.querySelector('#console .container');
-      const minSize = 25;
+      const minSize = 25;  // px
+      const startSize = getSizePercent(params.get('startSize') || '25%');
 
       let p;
+      let lastSize = startSize;
 
       if (!consoleOnly) {
         panes = Split(['#frameWrapper', '#console'], {
           direction: 'vertical',
           minSize: minSize,
-          sizes: [75, 25]
+          sizes: [100 - startSize, startSize],
+          onDragEnd: function(sizes) {
+            if (sizes[1] > minSize) {
+              lastSize = sizes[1];
+            }
+            // scroll input into view
+            consoleContainer.scrollTop = consoleContainer.scrollHeight; 
+          }
         });
       
         const frame = document.createElement('iframe');
@@ -96,6 +124,10 @@
         frameWrapper.appendChild(frame);
         
         p = createConsole(consoleContainer, frame);
+
+        if (params.has('collapsed')) {
+          panes.collapse(1);
+        }
       } else {
         document.body.classList.add('console-only');
         consoleDiv.style.height = '100%';
@@ -104,13 +136,14 @@
 
       consoleDiv.querySelector('h1').addEventListener('click', () => {
         if (panes) {
-          const size = consoleDiv.offsetHeight;
-          console.log(size);
-          if (size > minSize) {
-            panes.collapse(1);
+          let size;
+          const currentSize = consoleDiv.offsetHeight;
+          if (currentSize > minSize) {
+            size = getSizePercent(minSize + 'px');
           } else {
-            panes.setSizes([75, 25]);
+            size = lastSize;
           }
+          panes.setSizes([100 - size, size]);
         }
       });
     });
