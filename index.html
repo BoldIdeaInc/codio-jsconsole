@@ -35,7 +35,7 @@
       path = params.get('preview');
     }
 
-    if (!insideIDE) {
+    if (!insideIDE && path) {
       window.location.href = path;
     }
 
@@ -85,12 +85,15 @@
       return percentage;
     }
 
+    function collapse() {
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       const frameWrapper = document.querySelector('#frameWrapper');
       const consoleDiv = document.querySelector('#console');
       const consoleContainer = document.querySelector('#console .container');
       const minSize = 25;  // px
-      const startSize = getSizePercent(params.get('startSize') || '25%');
+      const startSize = getSizePercent(params.get('consoleSize') || '25%');
 
       let p;
       let lastSize = startSize;
@@ -134,16 +137,19 @@
         p = createConsole(consoleContainer);
       }
 
+      p.then(jsConsole => {
+        // Set dark theme by default
+        jsConsole.onRun(':theme dark');
+      });
+
       consoleDiv.querySelector('h1').addEventListener('click', () => {
         if (panes) {
-          let size;
           const currentSize = consoleDiv.offsetHeight;
           if (currentSize > minSize) {
-            size = getSizePercent(minSize + 'px');
+            panes.collapse(1);
           } else {
-            size = lastSize;
+            panes.setSizes([100 - lastSize, lastSize]);
           }
-          panes.setSizes([100 - size, size]);
         }
       });
     });
