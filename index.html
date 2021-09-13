@@ -125,9 +125,7 @@
         
         p = createConsole(consoleContainer, frame);
 
-        const defaultOpen = params.has('consoleOpen') || localStorage.getItem('consoleOpen');
-
-        if (!defaultOpen) {
+        if (params.has('collapsed')) {
           panes.collapse(1);
         }
       } else {
@@ -146,10 +144,8 @@
           const currentSize = consoleDiv.offsetHeight;
           if (currentSize > minSize) {
             panes.collapse(1);
-            localStorage.removeItem('consoleOpen');
           } else {
             panes.setSizes([100 - lastSize, lastSize]);
-            localStorage.setItem('consoleOpen', 1);
           }
         }
       });
