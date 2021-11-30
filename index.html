@@ -108,7 +108,7 @@
             consoleContainer.scrollTop = consoleContainer.scrollHeight; 
           }
         });
-
+      
         const frame = document.createElement('iframe');
         frame.src = path;
         frame.setAttribute('id', 'previewFrame');
@@ -125,7 +125,9 @@
         
         p = createConsole(consoleContainer, frame);
 
-        if (params.has('collapsed')) {
+        const defaultOpen = params.has('consoleOpen') || localStorage.getItem('consoleOpen');
+
+        if (!defaultOpen) {
           panes.collapse(1);
         }
       } else {
@@ -144,8 +146,10 @@
           const currentSize = consoleDiv.offsetHeight;
           if (currentSize > minSize) {
             panes.collapse(1);
+            localStorage.removeItem('consoleOpen');
           } else {
             panes.setSizes([100 - lastSize, lastSize]);
+            localStorage.setItem('consoleOpen', 1);
           }
         }
       });
